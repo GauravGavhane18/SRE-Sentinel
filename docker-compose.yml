@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  # Sentinel Monitoring Daemon
+  sentinel:
+    build: .
+    container_name: sentinel
+    network_mode: "host"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # Mount Docker socket for self-healing control
+      - ./config:/app/config                      # Mount config directory for dynamic edits
+      - ./logs:/app/logs                          # Mount logs to persist SRE incidents report
+    depends_on:
+      - sentinel-nginx
+      - sentinel-redis
+      - sentinel-postgres
+
+  # Monitored Service 1: Nginx Web Server
+  sentinel-nginx:
+    image: nginx:alpine
+    container_name: sentinel-nginx
+    ports:
+      - "8080:80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Monitored Service 2: Redis Cache
+  sentinel-redis:
+    image: redis:alpine
+    container_name: sentinel-redis
+    ports:
+      - "6379:6379"
+
+  # Monitored Service 3: PostgreSQL Database
+  sentinel-postgres:
+    image: postgres:alpine
+    container_name: sentinel-postgres
+    environment:
+      POSTGRES_PASSWORD: sentinelpass
+      POSTGRES_DB: sentinel_db
+    ports:
+      - "5432:5432"

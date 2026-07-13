@@ -1,0 +1,36 @@
+# Compiled Java classes & packages
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs
+/logs/
+*.log
+
+# IDEs and Editors
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+.metadata/
+*.sublime-project
+*.sublime-workspace
+
+# Operating System Files
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Package managers and builds
+.mvn/
+mvnw
+mvnw.cmd
+
+# Local environment configuration
+.env
+.env.local
+.env.*.local

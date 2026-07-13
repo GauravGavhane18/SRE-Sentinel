@@ -1,0 +1,61 @@
+{
+  "webServerPort": 8080,
+  "services": [
+    {
+      "name": "Nginx-Web-HTTP",
+      "type": "HTTP",
+      "target": "http://localhost:8080/",
+      "checkIntervalMs": 5000,
+      "timeoutMs": 2000,
+      "retryPolicy": {
+        "maxRetries": 3,
+        "initialBackoffMs": 1000,
+        "multiplier": 2.0,
+        "maxBackoffMs": 5000
+      },
+      "recoveryCommand": "docker restart sentinel-nginx"
+    },
+    {
+      "name": "Redis-Cache-TCP",
+      "type": "TCP",
+      "target": "localhost:6379",
+      "checkIntervalMs": 5000,
+      "timeoutMs": 2000,
+      "retryPolicy": {
+        "maxRetries": 3,
+        "initialBackoffMs": 1000,
+        "multiplier": 1.5,
+        "maxBackoffMs": 4000
+      },
+      "recoveryCommand": "docker restart sentinel-redis"
+    },
+    {
+      "name": "Postgres-DB-Docker",
+      "type": "DOCKER",
+      "target": "sentinel-postgres",
+      "checkIntervalMs": 5000,
+      "timeoutMs": 3000,
+      "retryPolicy": {
+        "maxRetries": 3,
+        "initialBackoffMs": 2000,
+        "multiplier": 2.0,
+        "maxBackoffMs": 6000
+      },
+      "recoveryCommand": "docker restart sentinel-postgres"
+    },
+    {
+      "name": "Backup-Daemon-Process",
+      "type": "PROCESS",
+      "target": "backup-daemon",
+      "checkIntervalMs": 5000,
+      "timeoutMs": 2000,
+      "retryPolicy": {
+        "maxRetries": 2,
+        "initialBackoffMs": 1000,
+        "multiplier": 2.0,
+        "maxBackoffMs": 3000
+      },
+      "recoveryCommand": "/bin/bash scripts/start-services.sh backup-daemon"
+    }
+  ]
+}
